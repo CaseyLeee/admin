@@ -175,8 +175,10 @@ export default {
         a.href = `${process.env.VUE_APP_BASE_UPLOAD_API}/app/2.1.0/asset/batch/staff/company`;
       }
       if (this.uesrType == 2 && this.getAgencyType() == 2) {
-        a.download = "cvisitor.zip";
-        a.href = `${process.env.VUE_APP_BASE_UPLOAD_API}/app/2.1.0/asset/batch/visitor/company`;
+        
+        a.download = "faceManagerBathch.zip";
+        a.href = `${process.env.VUE_APP_BASE_API}/SoftData/BatchZip/faceManagerBathc.zip`
+      
       }
       if (this.uesrType == 1 && this.getAgencyType() == 3) {
         a.download = "staff.zip";
@@ -239,10 +241,14 @@ export default {
         if (res && res.code == 1) {
           let { batchId, batchNum } = res.data;
           if (batchNum == 0) {
-            this.$Message.error(this.$t("personnel.register.registerError"));
+             let { failList, succeeList } = res.data;
+          this.failedList = failList;
+          this.successList = succeeList;
+
+            this.$Message.error("注册发生错误");
             return false;
           } else {
-            this.getRegisterSchedule(batchId, batchNum);
+            this.$Message.error(this.$t("common.templateError"));
           }
         } else {
           this.$Message.error(this.$t("common.templateError"));
@@ -261,8 +267,11 @@ export default {
           url,
         });
         if (res && res.code == 1) {
-          let { batchId, batchNum } = res.data;
+          let { batchId, batchNum,succeeList,failList } = res.data;
           if (batchNum == 0) {
+            console.log("failList",failList)
+            this.successList=succeeList;
+            this.failedList=failList;
             this.$Message.error(this.$t("personnel.register.registerError"));
             return false;
           } else {
@@ -381,6 +390,9 @@ export default {
 </script>
 
 <style scoped lang='less'>
+.el-table::before{
+      height: 0px;
+}
 .title_bla {
   font-size: 12px;
   font-family: PingFang SC;
@@ -465,8 +477,10 @@ export default {
           }
           &.failed {
             border-right: 1px solid #333;
+            height: calc(40vh - 70px);
           }
           &.success {
+            height: calc(40vh - 70px);
           }
         }
       }

@@ -77,9 +77,9 @@
           width="180"
         ></el-table-column>
         <el-table-column prop="robotModel" :label="$t('robots.add.type')">
-          <template slot-scope="scope">{{
+          <!-- <template slot-scope="scope">{{
             getRobotType(scope.row.robotType)
-          }}</template>
+          }}</template> -->
         </el-table-column>
         <el-table-column
           prop="name"
@@ -322,19 +322,19 @@ export default {
           this.multipleSelection.forEach(async (item) => {
             // robotSet.push(item.id)
 
-            let robot = item.id; //目前选中机器id
+            let identifier = item.identifier; //目前选中机器id
 
             const USERINFO =
               "IIM-INTELLIGENT-BUILDING-MANAGEMENT-SYSTEM-USERINFO";
             let { companyId } = store.state[USERINFO].userInfo || {};
             try {
               let param = {};
-              param.robotIdentifier = robot;
+              param.robotIdentifier = identifier;
               param.type = 1;
               param.robotCompanyId = companyId;
               const res = await syncData(this.$qs.stringify(param));
 
-              if (res.code == 1 && res.data) {
+              if (res.code == 1) {
                 this.$Message.success(item.name+"一键同步成功");
               } else {
                 this.$Message.error(item.name+res.msg);

@@ -183,7 +183,7 @@ export default {
 
           let jsn = { groupId: row.id };
           groupPojoList.push(jsn);
-alert(that.originid)
+
           let param = {
             toGroupId: that.originid,
             groupPojoList: groupPojoList,

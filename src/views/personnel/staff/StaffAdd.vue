@@ -7,7 +7,7 @@
       <el-form-item label="姓名" prop="name">
         <el-input v-model="form.name" />
       </el-form-item>
-      <el-form-item label="编号" prop="code">
+      <el-form-item label="房号" prop="code">
         <el-input v-model="form.code" />
       </el-form-item>
 
@@ -132,7 +132,7 @@ export default {
         code: [
           {
             required: true,
-            message: "请输入编号",
+            message: "请输入房号",
             trigger: "blur",
           },
         ],
@@ -342,6 +342,7 @@ export default {
        
         return false;
       }
+      
     this.imageUrl = URL.createObjectURL(file.raw);
 
 
@@ -374,7 +375,7 @@ export default {
       img.onload = function () {
         ctx.drawImage(this, 0, 0, 100, 100);
         let base64 = canvas.toDataURL("image/jpg", 1);
-        alert(base64);
+       
       };
     },
     async onSubmit(formName) {
@@ -387,7 +388,7 @@ export default {
         let array = [];
         let json = {
           fieldName: "code",
-          fieldType: 9,
+          fieldType: 2,
           fieldValue: this.form.code,
           fieldId: 999,
         };

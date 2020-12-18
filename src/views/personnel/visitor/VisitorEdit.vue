@@ -240,6 +240,7 @@ export default {
         ],
         headPath: [{ required: true, message: "请上传图片" }],
       },
+      oriheadPath:"",
       radio: 0,
       loading: null,
       inputVisible: false,
@@ -704,7 +705,10 @@ export default {
         formData.append("name", visitorName);
         formData.append("deadLineTime", visitorDueTime);
         formData.append("phone", 19987562264);
-        formData.append("headPath", headPath);
+        if(headPath!=this.oriheadPath){
+            formData.append("headPath", headPath);
+        }
+        
         formData.append("threshold", 0.76);
         formData.append("identity", 123456789123456);
 
@@ -714,6 +718,7 @@ export default {
         });
         if (res.code == 1) {
           this.$Message.success(this.$t("common.saveSuccess"));
+
         } else {
           this.$Message.error(this.$t("common.saveFailure"));
         }
@@ -753,13 +758,13 @@ export default {
           let { visitorFeaturePojoList } = result;
 
           this.formInline.headPath = result.visitor.headPath;
-
+          this.oriheadPath = result.visitor.headPath;
           this.formInline.groupId = result.visitor.groupManId;
 
           let fieldsMap = [];
           if (result.fieldsMap.length) {
             fieldsMap =
-              result.fieldsMap.filter((item) => item.fieldType == 9) || {};
+              result.fieldsMap.filter((item) => item.fieldType ==2) || {};
           }
 
           this.formInline.fieldsMap = fieldsMap;

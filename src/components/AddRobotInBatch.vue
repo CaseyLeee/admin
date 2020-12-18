@@ -383,6 +383,9 @@ export default {
 </script>
 
 <style scoped lang='less'>
+.el-table::before{
+      height: 0px;
+}
 .orange {
   font-weight: bold;
   color: #fd4a04;
@@ -465,8 +468,10 @@ export default {
           }
           &.failed {
             border-right: 1px solid #333;
+             height: calc(40vh -70px);
           }
           &.success {
+            height: calc(40vh - 70px);
           }
         }
       }

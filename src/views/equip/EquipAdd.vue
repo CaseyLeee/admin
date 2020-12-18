@@ -12,7 +12,7 @@
             ref="addForm"
             class="demo-ruleForm"
           >
-            <el-form-item :label="$t('robots.add.name')">
+            <el-form-item :label="$t('robots.add.name')" prop="name">
               <el-input
                 v-model.trim="formInline.name"
                 :placeholder="$t('robots.add.plzIptName')"

@@ -209,7 +209,7 @@ export default {
     return {
       groupsList: [],
       fieldOjbectRules:{
-              fieldOjbectRule:[{ required: true, message: '请输入编号', trigger: 'blur' }
+              fieldOjbectRule:[{ required: true, message: '请输入房号', trigger: 'blur' }
         
         ]
       },
@@ -272,7 +272,7 @@ export default {
   computed: {
      getfieldName(o){
       return function(o){
-        return o==="code"?"编号":o
+        return o==="code"?"房号":o
       }
     },
     uploadUrl() {
@@ -349,9 +349,8 @@ export default {
     },
     beforeupload(files){
        let { type, size, name } = files;
-      console.log("file.raw")
-      console.log(type)
-           if ((type.indexOf("png")<0)&&(type.indexOf("jpg")<0)&&(file.raw.type.indexOf("jpeg")<0)) {
+     
+           if ((type.indexOf("png")<0)&&(type.indexOf("jpg")<0)&&(type.indexOf("jpeg")<0)) {
       
         this.$Message.error("请上传png/jpg/jpeg格式图片");
        

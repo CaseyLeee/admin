@@ -829,9 +829,15 @@ changeSort(val){
           _this.multipleSelection.forEach(visitor => {
             visitorIdSet.push(visitor.visitorId)
           })
+         
+         
           if (_this.currentIndex == 0) {
-            _this.deleteVisitor(visitorIdSet.toString())
+          _this.deleteVisitor(visitorIdSet.toString())
           }
+
+        
+           
+         
         },
       })
     },
@@ -940,6 +946,7 @@ changeSort(val){
       }
     },
     async deleteVisitor(visitorId) {
+       
       try {
         let formData = new FormData()
         formData.append('visitorId', visitorId)
@@ -949,6 +956,9 @@ changeSort(val){
         if (res.code == 1) {
           console.log(res)
           this.$Message.success(this.$t('common.deleteSuccess'))
+         let num=visitorId.split(',').length
+          this.currentPage=Math.ceil((this.total-num)/this.pageSize)
+       
           this.queryVisitorInfo()
         } else {
           this.$Message.error(this.$t('common.deleteFailure'))
@@ -1038,6 +1048,7 @@ changeSort(val){
           console.log(res)
           this.tableData = res.data
           this.total = res.count
+         console.log("1",this.total)
         } else {
           this.$Message.error(this.$t('common.searchError'))
           this.tableData = []

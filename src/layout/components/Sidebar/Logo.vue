@@ -28,7 +28,7 @@ export default {
   },
   data() {
     return {
-      title: 'Vue Admin Template',
+      title: 'Admin',
       logo: require("../../../assets/img/icon_1.png"),
     }
   }

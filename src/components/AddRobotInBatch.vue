@@ -20,7 +20,7 @@
         <el-upload
           class="upload-demo"
           drag
-          accept="application/*"
+          accept=".xlsx"
           :limit="1"
           :action="''"
           :on-exceed="onExceed"
@@ -108,7 +108,9 @@
             <el-table-column
               prop="msg"
               :label="$t('personnel.register.notice')"
-            ></el-table-column>
+            >
+             <template>注册成功</template>
+            </el-table-column>
           </el-table>
         </div>
       </div>
@@ -157,6 +159,7 @@ export default {
     },
   },
   methods: {
+  
     // param是自带参数。 this.$refs.upload.submit() 会自动调用 httpRequest方法.在里面取得file
     httpRequest(param) {
       console.log("param");

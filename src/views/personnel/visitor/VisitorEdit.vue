@@ -38,6 +38,7 @@
               type="date"
               placeholder="选择结束日期"
               style="width: 100%"
+              value-format="yyyy-MM-dd HH:mm:ss"
             />
             <el-radio-group v-model="radio" @change="changeradio">
               <el-radio :label="1">永久</el-radio>

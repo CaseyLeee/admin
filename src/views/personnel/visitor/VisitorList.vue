@@ -432,6 +432,8 @@ export default {
   name: 'staff-list',
   data() {
     return {
+      prop:"",
+      order:"",
       isPicture: 1,
       isPic: 1,
       downPicList: [
@@ -596,8 +598,10 @@ export default {
       //排序的方法	每次排序会触发
 changeSort(val){
   
-	console.log(val) 
-  this.queryVisitorInfo(val.prop,val.order)
+  console.log(val) 
+  this.prop=val.prop
+  this.order=val.order
+  this.queryVisitorInfo(this.prop,this.order)
 },
     checkSelectable(row) {
       // let { visitorPermitVisior } = row || {}
@@ -1025,13 +1029,17 @@ changeSort(val){
       }
     },
     async queryVisitorInfo(prop,order) {
+      prop=this.prop
+      order=this.order
+      // console.log("this.prop",this.prop)
+      //  console.log("this.order",this.order)
       try {
         let formData = new FormData()
          var orderitem=order!=="ascending"?"desc":"asc"
-        if(prop==="visitorName"){
+        if(prop==="visitorName"&&this.order!=null){
           formData.append('sortName', orderitem)
         }
-        if(prop==="visitorGroupName"){
+        if(prop==="visitorGroupName"&&this.order!=null){
           formData.append('sortGroupName', orderitem)
         }
         formData.append('searchName', this.visitorName)

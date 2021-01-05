@@ -273,7 +273,8 @@ export default {
   computed: {
      getfieldName(o){
       return function(o){
-        return o==="code"?"房号":o
+        // return o==="code"?"房号":o
+        return o
       }
     },
     uploadUrl() {
@@ -719,7 +720,11 @@ export default {
         if (res.code == 1) {
           this.$Message.success(this.$t("common.saveSuccess"));
 
-        } else {
+        } 
+        else if(res.code==undefined){
+           this.$Message.error(res);
+        }
+        else {
           this.$Message.error(this.$t("common.saveFailure"));
         }
       } catch (err) {

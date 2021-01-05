@@ -29,6 +29,7 @@
           :on-success="onSuccess"
           :file-list="fileList"
           :auto-upload="false"
+          :on-change="onChangeFile"
           :http-request="httpRequest"
           ref="upload"
         >
@@ -159,7 +160,17 @@ export default {
     },
   },
   methods: {
-  
+  	onChangeFile(file, fileList) {
+      if (file.name.split('.').pop() !== 'xlsx' && file.name.split('.').pop() !== 'XLSX') { // 类型有可能大写，记得要写
+       
+	    this.$message({
+	      message: '请上传.xlsx格式的文件',
+	      type: 'error'
+      })
+      this.$refs.upload.clearFiles();
+      } 
+      
+    },
     // param是自带参数。 this.$refs.upload.submit() 会自动调用 httpRequest方法.在里面取得file
     httpRequest(param) {
       console.log("param");
@@ -216,10 +227,12 @@ export default {
       }, LOOP_TIME);
     },
     async updateRobotsInfoBatch(url) {
+     
+      
       if (!this.getAgencyInfo) return;
       try {
         this.$refs.upload.submit();
-
+        if(!this.filebinary) return
         let { agencyId } = this.getAgencyInfo;
 
         let formData = new FormData();

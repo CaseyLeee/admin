@@ -23,7 +23,7 @@ export default {
   height: calc(100vh - 70px);
   /* width: 100%; DIF*/
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden; */
   margin-left: 40px;
    margin-top: 20px;
 }

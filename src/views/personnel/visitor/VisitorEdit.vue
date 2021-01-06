@@ -5,7 +5,7 @@
         <el-form
           ref="form"
           :model="formInline"
-          label-width="120px"
+          label-width="80px"
           :rules="rules"
         >
           <el-form-item label="姓名" prop="visitorName">
@@ -13,11 +13,10 @@
           </el-form-item>
           <el-form-item
             :label="getfieldName(item.fieldName)"
-           
             v-for="(item, index) in formInline.fieldsMap"
             :key="`room-type-${index}`"
             :rules="fieldOjbectRules.fieldOjbectRule"
-             :prop="'fieldsMap.' + index +'.fieldValue'"
+            :prop="'fieldsMap.' + index + '.fieldValue'"
           >
             <el-input v-model="item.fieldValue" />
           </el-form-item>
@@ -46,13 +45,15 @@
               <el-radio :label="3">半年</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="上传头像" prop="headPath">
-            <el-upload
+          <el-form-item label="上传头像">
+            <!-- <el-upload
+              :file-list="fileList"
               class="avatar-uploader"
               :action="uploadUrl"
-              :show-file-list="false"
               :on-success="onSuccess"
               :before-upload="beforeupload"
+              multiple
+              list-type="picture-card"
             >
               <img
                 v-if="formInline.headPath"
@@ -60,11 +61,30 @@
                 class="avatar"
               />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload> -->
+
+            <!-- start -->
+            <el-upload
+              action="#"
+              
+              ref="upload"
+              list-type="picture-card"
+              :on-remove="deletePicture"
+              :file-list="fileList"
+              :http-request="updateVisitor"
+              :on-change="onChangeFile"
+            >
+              <i slot="default" class="el-icon-plus"></i>
             </el-upload>
+
+            <!-- end -->
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" @click="submit('form')" style="width: 100%"
+            <el-button
+              type="primary"
+              @click="submit('form')"
+              style="width: 100%"
               >修改</el-button
             >
           </el-form-item>
@@ -208,11 +228,12 @@ export default {
   name: "visitor-edit",
   data() {
     return {
+      fileList: [],
       groupsList: [],
-      fieldOjbectRules:{
-              fieldOjbectRule:[{ required: true, message: '请输入房号', trigger: 'blur' }
-        
-        ]
+      fieldOjbectRules: {
+        fieldOjbectRule: [
+          { required: true, message: "请输入房号", trigger: "blur" },
+        ],
       },
       rules: {
         visitorName: [
@@ -222,7 +243,6 @@ export default {
             trigger: "blur",
           },
         ],
-       
 
         groupId: [
           {
@@ -237,11 +257,11 @@ export default {
             required: true,
             message: "请选择截止日期",
             trigger: "blur",
-          }
+          },
         ],
         headPath: [{ required: true, message: "请上传图片" }],
       },
-      oriheadPath:"",
+      oriheadPath: "",
       radio: 0,
       loading: null,
       inputVisible: false,
@@ -271,14 +291,14 @@ export default {
     };
   },
   computed: {
-     getfieldName(o){
-      return function(o){
+    getfieldName(o) {
+      return function (o) {
         // return o==="code"?"房号":o
-        return o
-      }
+        return o;
+      };
     },
     uploadUrl() {
-      return  `${process.env.VUE_APP_BASE_UPLOAD_API}/app/2.0.0/register/picture`;
+      return `${process.env.VUE_APP_BASE_UPLOAD_API}/app/2.0.0/register/picture`;
     },
     ...mapGetters(["getAgencyInfo"]),
     to() {
@@ -295,6 +315,18 @@ export default {
     },
   },
   methods: {
+    onChangeFile(file, fileList) {
+      if (
+        file.name.split(".").pop() !== "png" &&
+        file.name.split(".").pop() !== "jpg" &&
+        file.name.split(".").pop() !== "jpeg"
+      ) {
+        // 类型有可能大写，记得要写
+
+        this.$Message.error("请上传png/jpg/jpeg格式图片");
+        this.$refs.upload.clearFiles();
+      }
+    },
     changeradio(value) {
       if (value === 1) {
         this.formInline.visitorDueTime = moment()
@@ -343,22 +375,24 @@ export default {
         this.$Message.error(this.$t("common.searchError"));
       }
     },
-    onSuccess(res) {
-     
-      if (res.code == 1) {
-        this.formInline.headPath = res.data.url;
-      }
-    },
-    beforeupload(files){
-       let { type, size, name } = files;
-     
-           if ((type.indexOf("png")<0)&&(type.indexOf("jpg")<0)&&(type.indexOf("jpeg")<0)) {
-      
-        this.$Message.error("请上传png/jpg/jpeg格式图片");
-       
-        return false;
-      }
-    },
+    // onSuccess(res) {
+    //   if (res.code == 1) {
+    //     this.formInline.headPath = res.data.url;
+    //   }
+    // },
+    // beforeupload(files) {
+    //   let { type, size, name } = files;
+
+    //   if (
+    //     type.indexOf("png") < 0 &&
+    //     type.indexOf("jpg") < 0 &&
+    //     type.indexOf("jpeg") < 0
+    //   ) {
+    //     this.$Message.error("请上传png/jpg/jpeg格式图片");
+
+    //     return false;
+    //   }
+    // },
     addGroup() {
       this.$prompt("请输入分组名称", "创建分组", {
         confirmButtonText: "确定",
@@ -418,19 +452,21 @@ export default {
       item.active = show;
     },
     deletePicture(item) {
+      console.log(item);
       let { id } = item;
       let _this = this;
-      this.$toast({
-        title: _this.$t("common.confirm"),
-        content: `${_this.$t("common.delete")}${_this.$t(
-          "mng.bigdata.avator"
-        )}?`,
-        onOkText: _this.$t("common.confirm"),
-        onConcelText: _this.$t("common.cancel"),
-        onOk() {
-          _this.deleteVisitorPicture(id);
-        },
-      });
+      _this.deleteVisitorPicture(id);
+      // this.$toast({
+      //   title: _this.$t("common.confirm"),
+      //   content: `${_this.$t("common.delete")}${_this.$t(
+      //     "mng.bigdata.avator"
+      //   )}?`,
+      //   onOkText: _this.$t("common.confirm"),
+      //   onConcelText: _this.$t("common.cancel"),
+      //   onOk() {
+
+      //   },
+      // });
     },
     handleShowIpt(visible) {
       this.inputVisible = visible;
@@ -469,7 +505,7 @@ export default {
         this.updateVisitor();
       };
     },
-    async updateVisitor() {
+    async updateVisitor(param) {
       try {
         let _this = this;
         this.loading = this.$loading({
@@ -495,43 +531,57 @@ export default {
           type,
         } = this.formInline;
         let formData = new FormData();
-        let index = this.formInline.visitorPicture.indexOf(",");
-        let baseImg = this.formInline.visitorPicture.slice(index + 1);
-        formData.append("imageList", baseImg);
-        formData.append("visitorId", id);
-        formData.append("companyId", companyId);
-        formData.append("propertyId", propertyId);
-        formData.append("authorize", authorize);
-        formData.append("threshold", threshold);
-        formData.append("groupId", groupManId);
-        formData.append("remarkCompany", remarkCompany);
-        formData.append("voiceMessage", voiceMessage);
-        formData.append("validPeriod", visitorDueTime);
-        formData.append("registerType", registerType);
-        formData.append("type", type);
-        const res = await updateVisitor(formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        // if (res && res.code == 1) {
-        //   this.loading.close();
-        //   this.$Message.success(this.$t("common.addSuccess"));
-        //   this.queryUser(this.$route.query.visitorId);
-        // }
-        if (res && (res.code == 2 || res.code == 1)) {
-          this.loopTimes = 10;
-          if (this.timer) {
-            clearInterval(this.timer);
-            this.timer = null;
-          }
-          this.timer = setInterval(() => {
-            if (this.loopTimes >= 0) {
-              this.checkVisitorRegisterInfo(res.data.id, res.data.token);
+
+        let file = param.file;
+
+        let reader = new FileReader();
+        let imgResult = "";
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+          imgResult = reader.result;
+        };
+        reader.onerror = function (error) {};
+        reader.onloadend = async () => {
+          let index = imgResult.indexOf(",");
+          let baseImg = imgResult.slice(index + 1);
+          formData.append("imageList", baseImg);
+          formData.append("visitorId", id);
+          formData.append("companyId", companyId);
+          formData.append("propertyId", propertyId);
+          formData.append("authorize", authorize);
+          formData.append("threshold", threshold);
+          formData.append("groupId", groupManId);
+          formData.append("remarkCompany", remarkCompany);
+          formData.append("voiceMessage", voiceMessage);
+          formData.append("validPeriod", visitorDueTime);
+          formData.append("registerType", registerType);
+          formData.append("type", type);
+          const res = await updateVisitor(formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          // if (res && res.code == 1) {
+          //   this.loading.close();
+          //   this.$Message.success(this.$t("common.addSuccess"));
+          //   this.queryUser(this.$route.query.visitorId);
+          // }
+          if (res && (res.code == 2 || res.code == 1)) {
+            this.loopTimes = 10;
+            if (this.timer) {
+              clearInterval(this.timer);
+              this.timer = null;
             }
-          }, 1000);
-        } else {
-          this.loading.close();
-          this.$Message.error(this.$t("common.addFailure"));
-        }
+            this.timer = setInterval(() => {
+              if (this.loopTimes >= 0) {
+                this.checkVisitorRegisterInfo(res.data.id, res.data.token);
+              }
+            }, 1000);
+          } else {
+            this.loading.close();
+            this.$Message.error(this.$t("common.addFailure"));
+          }
+
+          // this.$refs.file.clearValidate()
+        };
       } catch (err) {
       } finally {
         this.formInline.visitorPicture = null;
@@ -546,7 +596,8 @@ export default {
         });
         if (res && (res.code == 1 || res.code == 2)) {
           this.$Message.success(this.$t("common.deleteSuccess"));
-          this.queryUser(this.$route.query.visitorId);
+
+          // this.queryUser(this.$route.query.visitorId);
         } else {
           this.$Message.error(this.$t("common.deleteFailure"));
         }
@@ -635,25 +686,24 @@ export default {
 
     submit(formName) {
       // if (!this.check()) return;
-       this.$refs[formName].validate((valid) => {
-          if (valid) {
-              let _this = this;
-      this.$toast({
-        title: _this.$t("common.confirm"),
-        content: _this.$t("personnel.edit.submitHint"),
-        onOkText: _this.$t("common.confirm"),
-        onConcelText: _this.$t("common.cancel"),
-        onOk() {
-          _this.updateStaffInfo();
-          //  _this.updatepers();
-        },
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let _this = this;
+          this.$toast({
+            title: _this.$t("common.confirm"),
+            content: _this.$t("personnel.edit.submitHint"),
+            onOkText: _this.$t("common.confirm"),
+            onConcelText: _this.$t("common.cancel"),
+            onOk() {
+              _this.updateStaffInfo();
+              //  _this.updatepers();
+            },
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
       });
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-    
     },
     reset() {
       let _this = this;
@@ -706,10 +756,10 @@ export default {
         formData.append("name", visitorName);
         formData.append("deadLineTime", visitorDueTime);
         formData.append("phone", 19987562264);
-        if(headPath!=this.oriheadPath){
-            formData.append("headPath", headPath);
-        }
-        
+        // if (headPath != this.oriheadPath) {
+        //   formData.append("headPath", headPath);
+        // }
+
         formData.append("threshold", 0.76);
         formData.append("identity", 123456789123456);
 
@@ -719,12 +769,9 @@ export default {
         });
         if (res.code == 1) {
           this.$Message.success(this.$t("common.saveSuccess"));
-
-        } 
-        else if(res.code==undefined){
-           this.$Message.error(res);
-        }
-        else {
+        } else if (res.code == undefined) {
+          this.$Message.error(res);
+        } else {
           this.$Message.error(this.$t("common.saveFailure"));
         }
       } catch (err) {
@@ -765,11 +812,37 @@ export default {
           this.formInline.headPath = result.visitor.headPath;
           this.oriheadPath = result.visitor.headPath;
           this.formInline.groupId = result.visitor.groupManId;
+          //得到fileList
+          if (this.fileList.length == 0) {
+            this.fileList = result.visitorFeaturePojoList
+              ? result.visitorFeaturePojoList.map((item) => {
+                  return {
+                    url: `${process.env.VUE_APP_BASE_FEATURE_API}${item.picturePath}`,
+                    id: item.id,
+                  };
+                })
+              : [];
+          } else {
+        
 
+            this.fileList.push({
+              id:
+                result.visitorFeaturePojoList[
+                  result.visitorFeaturePojoList.length - 1
+                ].id,
+              url: `${process.env.VUE_APP_BASE_FEATURE_API}${
+                result.visitorFeaturePojoList[
+                  result.visitorFeaturePojoList.length - 1
+                ].picturePath
+              }`,
+            });
+          }
+
+          //end
           let fieldsMap = [];
           if (result.fieldsMap.length) {
             fieldsMap =
-              result.fieldsMap.filter((item) => item.fieldType ==2) || {};
+              result.fieldsMap.filter((item) => item.fieldType == 2) || {};
           }
 
           this.formInline.fieldsMap = fieldsMap;
@@ -861,6 +934,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  .el-upload-list__item-actions{
+      transition: none !important;
+    }
 .avatar {
   width: 178px;
   height: 178px;

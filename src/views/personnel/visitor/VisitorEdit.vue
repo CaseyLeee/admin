@@ -64,18 +64,18 @@
             </el-upload> -->
 
             <!-- start -->
-            <el-upload
-              action="#"
-              
-              ref="upload"
-              list-type="picture-card"
-              :on-remove="deletePicture"
-              :file-list="fileList"
-              :http-request="updateVisitor"
-              :on-change="onChangeFile"
-            >
-              <i slot="default" class="el-icon-plus"></i>
-            </el-upload>
+            <div class="uploaddiv">
+              <el-upload
+                action="#"
+                ref="upload"
+                list-type="picture-card"
+                :on-remove="deletePicture"
+                :file-list="fileList"
+                :http-request="updateVisitor"
+              >
+                <i slot="default" class="el-icon-plus"></i>
+              </el-upload>
+            </div>
 
             <!-- end -->
           </el-form-item>
@@ -89,115 +89,6 @@
             >
           </el-form-item>
         </el-form>
-      </div>
-    </div>
-    <!-- 分隔------------------------------------- -->
-    <div class="panel center" style="display: none">
-      <div class="panel">
-        <div class="item name">
-          <div class="title">{{ $t("personnel.edit.name") }}</div>
-          <input
-            v-model.trim="formInline.visitorName"
-            maxlength="20"
-            :placeholder="$t('personnel.edit.plzIptName')"
-          />
-        </div>
-
-        <div class="item dueTime">
-          <div class="title">{{ $t("personnel.edit.deadLine") }}</div>
-          <el-date-picker
-            style="width: 100%"
-            v-model="formInline.visitorDueTime"
-            :placeholder="$t('personnel.edit.plzIptDeadLine')"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            type="datetime"
-          ></el-date-picker>
-          <el-radio-group v-model="radio">
-            <el-radio :label="1">永久</el-radio>
-            <el-radio :label="2">一年</el-radio>
-            <el-radio :label="3">半年</el-radio>
-          </el-radio-group>
-        </div>
-        <div class="item upload">
-          <div class="title">{{ $t("personnel.edit.avator") }}</div>
-          <div class="content">
-            <template v-if="formInline.featureList.length">
-              <div
-                class="avator"
-                @mouseenter="handleShowDeleteIcon(item, true)"
-                @mouseleave="handleShowDeleteIcon(item, false)"
-                v-for="item in formInline.featureList"
-                :key="item.robotFeatureId"
-              >
-                <template>
-                  <img
-                    :src="getAvator(item)"
-                    @click="handleZoom(item)"
-                    @error="handleLoadError(item)"
-                  />
-                  <p v-if="item.loadError" class="center invalid">
-                    {{ $t("personnel.staff.invalid") }}
-                  </p>
-                </template>
-                <img
-                  @click="deletePicture(item)"
-                  v-show="item.active && formInline.featureList.length > 1"
-                  :src="deleteIcon"
-                  :title="$t('common.delete')"
-                  class="delete"
-                />
-              </div>
-            </template>
-            <template v-else>
-              <div class="avator">
-                <img :src="formInline.uploadIcon" class="add" alt />
-              </div>
-            </template>
-            <div
-              class="button center avator"
-              @mouseenter="handleShowIpt(true)"
-              @mouseleave="handleShowIpt(false)"
-            >
-              <div class="btnText center">
-                {{ $t("personnel.edit.upload") }}
-              </div>
-              <input
-                v-if="inputVisible"
-                type="file"
-                :title="$t('personnel.edit.upload')"
-                accept="image/png, image/jpeg, image/jpg"
-                @change="upload"
-              />
-            </div>
-          </div>
-        </div>
-
-        <!-- <div class="item account" v-if="formInline.visitorAccount">
-          <div class="title">{{$t('personnel.edit.account')}}</div>
-          <div class="content">
-            <div class="account">{{formInline.visitorAccount}}</div>
-            <div class="button center" @click="reset">{{$t('personnel.edit.reset')}}</div>
-          </div>
-        </div> -->
-        <!-- <div class="item permissions">
-          <div class="title">设备权限</div>
-
-          <el-checkbox
-            :indeterminate="isIndeterminate"
-            v-model="checkAll"
-            @change="handleCheckAllChange"
-          >全选</el-checkbox>
-          <div style="margin: 15px 0;"></div>
-          <el-checkbox-group v-model="checkedPers" @change="handleCheckedPerChange">
-            <el-checkbox v-for="robot in robotsList" :label="robot.identifier" :key="robot.identifier">{{robot.name}}</el-checkbox>
-          </el-checkbox-group>
-        </div> -->
-
-        <div class="item submit">
-          <div class="button center" @click="submit">
-            {{ $t("common.submit") }}
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -315,18 +206,20 @@ export default {
     },
   },
   methods: {
-    onChangeFile(file, fileList) {
-      if (
-        file.name.split(".").pop() !== "png" &&
-        file.name.split(".").pop() !== "jpg" &&
-        file.name.split(".").pop() !== "jpeg"
-      ) {
-        // 类型有可能大写，记得要写
+    // onChangeFile(file, fileList) {
+    //   if (
+    //     file.name.split(".").pop() !== "png" &&
+    //     file.name.split(".").pop() !== "jpg" &&
+    //     file.name.split(".").pop() !== "jpeg"
+    //   ) {
+    //     // 类型有可能大写，记得要写
 
-        this.$Message.error("请上传png/jpg/jpeg格式图片");
-        this.$refs.upload.clearFiles();
-      }
-    },
+    //     this.$Message.error("请上传png/jpg/jpeg格式图片");
+
+    //     this.$refs.upload.clearFiles();
+    //     return false
+    //   }
+    // },
     changeradio(value) {
       if (value === 1) {
         this.formInline.visitorDueTime = moment()
@@ -506,6 +399,20 @@ export default {
       };
     },
     async updateVisitor(param) {
+      let file = param.file;
+      if (
+        file.name.split(".").pop() !== "png" &&
+        file.name.split(".").pop() !== "jpg" &&
+        file.name.split(".").pop() !== "jpeg"
+      ) {
+        // 类型有可能大写，记得要写
+
+        this.$Message.error("请上传png/jpg/jpeg格式图片");
+        this.$refs.upload.uploadFiles.pop(); //清除掉最后一个错误的文件
+
+        return false;
+      }
+
       try {
         let _this = this;
         this.loading = this.$loading({
@@ -531,8 +438,6 @@ export default {
           type,
         } = this.formInline;
         let formData = new FormData();
-
-        let file = param.file;
 
         let reader = new FileReader();
         let imgResult = "";
@@ -596,10 +501,9 @@ export default {
         });
         if (res && (res.code == 1 || res.code == 2)) {
           this.$Message.success(this.$t("common.deleteSuccess"));
-
-          // this.queryUser(this.$route.query.visitorId);
         } else {
-          this.$Message.error(this.$t("common.deleteFailure"));
+          this.$Message.error(res.msg);
+          this.queryUser(this.$route.query.visitorId);
         }
       } catch (err) {
         this.$Message.error(this.$t("common.deleteFailure"));
@@ -689,16 +593,16 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let _this = this;
-          this.$toast({
-            title: _this.$t("common.confirm"),
-            content: _this.$t("personnel.edit.submitHint"),
-            onOkText: _this.$t("common.confirm"),
-            onConcelText: _this.$t("common.cancel"),
-            onOk() {
+          // this.$toast({
+          //   title: _this.$t("common.confirm"),
+          //   content: _this.$t("personnel.edit.submitHint"),
+          //   onOkText: _this.$t("common.confirm"),
+          //   onConcelText: _this.$t("common.cancel"),
+            // onOk() {
               _this.updateStaffInfo();
               //  _this.updatepers();
-            },
-          });
+          //   },
+          // });
         } else {
           console.log("error submit!!");
           return false;
@@ -813,30 +717,15 @@ export default {
           this.oriheadPath = result.visitor.headPath;
           this.formInline.groupId = result.visitor.groupManId;
           //得到fileList
-          if (this.fileList.length == 0) {
-            this.fileList = result.visitorFeaturePojoList
-              ? result.visitorFeaturePojoList.map((item) => {
-                  return {
-                    url: `${process.env.VUE_APP_BASE_FEATURE_API}${item.picturePath}`,
-                    id: item.id,
-                  };
-                })
-              : [];
-          } else {
-        
 
-            this.fileList.push({
-              id:
-                result.visitorFeaturePojoList[
-                  result.visitorFeaturePojoList.length - 1
-                ].id,
-              url: `${process.env.VUE_APP_BASE_FEATURE_API}${
-                result.visitorFeaturePojoList[
-                  result.visitorFeaturePojoList.length - 1
-                ].picturePath
-              }`,
-            });
-          }
+          this.fileList = result.visitorFeaturePojoList
+            ? result.visitorFeaturePojoList.map((item) => {
+                return {
+                  url: `${process.env.VUE_APP_BASE_FEATURE_API}${item.picturePath}`,
+                  id: item.id,
+                };
+              })
+            : [];
 
           //end
           let fieldsMap = [];
@@ -933,10 +822,14 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
-  .el-upload-list__item-actions{
-      transition: none !important;
-    }
+<style lang="less" >
+.uploaddiv{
+  height: 400px;
+    overflow: auto;
+}
+.el-upload-list__item {
+  transition: none !important;
+}
 .avatar {
   width: 178px;
   height: 178px;

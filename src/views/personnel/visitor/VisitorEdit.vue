@@ -31,7 +31,7 @@
             </el-select>
             <span class="addGroup" @click="addGroup()"></span>
           </el-form-item>
-          <el-form-item label="有效期" prop="visitorDueTime">
+          <el-form-item label="有效期" prop="visitorDueTime" ref="datecheck">
             <el-date-picker
               v-model="formInline.visitorDueTime"
               type="date"
@@ -143,7 +143,7 @@ export default {
           },
         ],
 
-        deadlinetime: [
+        visitorDueTime: [
           {
             required: true,
             message: "请选择截止日期",
@@ -221,6 +221,7 @@ export default {
     //   }
     // },
     changeradio(value) {
+       this.$refs.datecheck.clearValidate()
       if (value === 1) {
         this.formInline.visitorDueTime = moment()
           .subtract(-500, "years")
@@ -400,13 +401,12 @@ export default {
     },
     async updateVisitor(param) {
       let file = param.file;
+      console.log("file.type", file.type);
       if (
-        file.name.split(".").pop() !== "png" &&
-        file.name.split(".").pop() !== "jpg" &&
-        file.name.split(".").pop() !== "jpeg"
+        file.type.indexOf("png") < 0 &&
+        file.type.indexOf("jpg") < 0 &&
+        file.type.indexOf("jpeg") < 0
       ) {
-        // 类型有可能大写，记得要写
-
         this.$Message.error("请上传png/jpg/jpeg格式图片");
         this.$refs.upload.uploadFiles.pop(); //清除掉最后一个错误的文件
 
@@ -598,9 +598,9 @@ export default {
           //   content: _this.$t("personnel.edit.submitHint"),
           //   onOkText: _this.$t("common.confirm"),
           //   onConcelText: _this.$t("common.cancel"),
-            // onOk() {
-              _this.updateStaffInfo();
-              //  _this.updatepers();
+          // onOk() {
+          _this.updateStaffInfo();
+          //  _this.updatepers();
           //   },
           // });
         } else {
@@ -823,9 +823,9 @@ export default {
 </script>
 
 <style lang="less" >
-.uploaddiv{
+.uploaddiv {
   height: 400px;
-    overflow: auto;
+  overflow: auto;
 }
 .el-upload-list__item {
   transition: none !important;

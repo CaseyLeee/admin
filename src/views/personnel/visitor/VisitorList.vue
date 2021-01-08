@@ -964,7 +964,7 @@ changeSort(val){
          let page=Math.ceil((this.total-num)/this.pageSize)
          let pageori=Math.ceil((this.total)/this.pageSize)
         if(page!=pageori){
-          this.currentPage= this.currentPage-1
+          this.currentPage= this.currentPage==1?1: this.currentPage-1
         }
          
        

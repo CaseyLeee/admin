@@ -161,8 +161,8 @@
           <el-table-column :label="$t('personnel.staff.picture')" width="160">
             <template slot-scope="scope">
               <img
-                :src="getAvator(scope.row.regPath)"
-                @click="preview(scope.row.regPath)"
+                :src="getAvator(scope.row.picturePath)"
+                @click="preview(scope.row.picturePath)"
                 alt
                 class="haadPath"
               />
@@ -1025,12 +1025,14 @@ export default {
     });
   },
   beforeDestroy() {
+    
     this.$ebus.$off("/main/staff/list");
     if (this.timer) {
       clearInterval(this.timer);
     }
     if (this.timer2) {
-      clearInterval(this.timer2);
+     clearTimeout(this.timer2)
+      
     }
   },
 };

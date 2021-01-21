@@ -731,7 +731,7 @@ export default {
           let fieldsMap = [];
           if (result.fieldsMap.length) {
             fieldsMap =
-              result.fieldsMap.filter((item) => item.fieldType == 2) || {};
+              result.fieldsMap.filter((item) => item.fieldType == 4||item.fieldType == 2) || {};
           }
 
           this.formInline.fieldsMap = fieldsMap;

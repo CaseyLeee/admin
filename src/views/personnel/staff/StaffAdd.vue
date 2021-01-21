@@ -388,7 +388,7 @@ export default {
         let array = [];
         let json = {
           fieldName: "房号",
-          fieldType: 2,
+          fieldType: 4,
           fieldValue: this.form.code,
           fieldId: 999,
         };

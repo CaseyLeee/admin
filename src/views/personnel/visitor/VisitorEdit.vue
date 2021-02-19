@@ -15,7 +15,7 @@
             :label="getfieldName(item.fieldName)"
             v-for="(item, index) in formInline.fieldsMap"
             :key="`room-type-${index}`"
-            :rules="fieldOjbectRules.fieldOjbectRule"
+            :rules="item.fieldName=='房号'?fieldOjbectRules.fieldOjbectRule:fieldOjbectRules.fieldOjbectRule2"
             :prop="'fieldsMap.' + index + '.fieldValue'"
           >
             <el-input v-model="item.fieldValue" />
@@ -124,6 +124,9 @@ export default {
       fieldOjbectRules: {
         fieldOjbectRule: [
           { required: true, message: "请输入房号", trigger: "blur" },
+        ],
+         fieldOjbectRule2: [
+          { required: false },
         ],
       },
       rules: {
@@ -729,11 +732,11 @@ export default {
 
           //end
           let fieldsMap = [];
-          if (result.fieldsMap.length) {
-            fieldsMap =
-              result.fieldsMap.filter((item) => item.fieldType == 4||item.fieldType == 2) || {};
-          }
-
+          // if (result.fieldsMap.length) {
+          //   fieldsMap =
+          //     result.fieldsMap.filter((item) => item.fieldType == 4||item.fieldType == 2) || {};
+          // }
+          fieldsMap=  result.fieldsMap
           this.formInline.fieldsMap = fieldsMap;
 
           let acc = "";

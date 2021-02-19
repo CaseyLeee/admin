@@ -10,6 +10,9 @@
       <el-form-item label="房号" prop="code">
         <el-input v-model="form.code" />
       </el-form-item>
+      <el-form-item :label="item.fieldName"  v-for="(item, index) in fieldsMap"  :key="`room-type-${index}`" >
+        <el-input v-model="item.fieldValue" />
+      </el-form-item>
 
       <!-- <el-form-item label="自定义" prop="name">
         <div class="vip-base-info">
@@ -114,11 +117,12 @@
 
 <script>
 import moment from "moment";
-import { userregsig, addgroup } from "@/api/group";
+import { userregsig, addgroup,userconfigquery } from "@/api/group";
 import { queryGroupInfoByType } from "@/api/personnel";
 export default {
   data() {
     return {
+      fieldsMap:[],
       isEdit: true,
       hobbyList: [],
       rules: {
@@ -192,9 +196,26 @@ export default {
     }
     this.role = 2;
     this.queryGroupInfoByType(this.role);
+     this.userconfigquery();
   },
   methods: {
-   
+    async userconfigquery() {
+      try {
+         let formData = new FormData();
+       
+          formData.append("type", 2);
+        
+       
+        const res = await userconfigquery(formData);
+        if (res.code == 1 && res.data) {
+          this.fieldsMap=res.data.fieldsMap
+        } else {
+          this.$Message.error(res.msg);
+        }
+      } catch (err) {
+        this.$Message.error(this.$t("common.searchError"));
+      }
+    },
     fill_FieldsMap_Hobby_And_Taboo() {
       let hobbyObj = {};
       let hobbyList = [];
@@ -393,11 +414,12 @@ export default {
           fieldId: 999,
         };
         array.push(json);
+        array.push(...this.fieldsMap);
         this.form.fields = JSON.stringify(array);
      
     
-        console.log(this.form)
-        const res = await userregsig(this.form);
+        console.log(111,this.form)
+         const res = await userregsig(this.form);
 
         if (res.code == 1) {
           this.$message("注册成功!");

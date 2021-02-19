@@ -79,7 +79,8 @@ axios.interceptors.request.use(config => {
             config.url.includes("manager/addGroupMan")||
             config.url.includes("manager/updateGroupMan")||
             config.url.includes("robot/getSynVisitors")||
-            config.url.includes("modify/user")
+            config.url.includes("modify/user")||
+            config.url.includes("config/query")
         ) {
             config.data.append("msToken", extraToken);
         } else {
@@ -91,7 +92,8 @@ axios.interceptors.request.use(config => {
         }
         if (config.url.includes("user/list") ||
             config.url.includes("manager/addGroupMan") ||  config.url.includes("manager/updateGroupMan")||
-            config.url.includes("queryVisitorInfo")|| config.url.includes("updateRobotsInfo")) {
+            config.url.includes("queryVisitorInfo")|| config.url.includes("updateRobotsInfo")||
+            config.url.includes("config/query")) {
             config.data.set("companyId", companyId);
         }
         if (config.url.includes("updateRobotsInfo")&&config.data.get("name")=="null"){

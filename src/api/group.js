@@ -98,3 +98,11 @@ export function userregsig(data) {
       data 
     })
   }
+  export function userconfigquery(data) {
+
+    return request({
+      url: '/app/2.1.0/company/user/config/query',
+      method: 'post',
+      data 
+    })
+  }

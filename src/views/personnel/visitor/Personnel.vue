@@ -8,9 +8,7 @@
       <div class="operate center">
         <div class="item">
           <div class="groups center">
-            <span style="margin-right: 10px">
-             设备:
-            </span>
+            <span style="margin-right: 10px"> 设备: </span>
             <el-select
               v-model="identifier"
               filterable
@@ -30,7 +28,7 @@
             </el-select>
           </div>
           <div class="search groups center">
-            <span style="width: 40px;">搜索:</span>
+            <span style="width: 40px">搜索:</span>
             <el-input
               :placeholder="$t('common.search')"
               v-model.trim="searchName"
@@ -114,13 +112,13 @@
                 size="mini"
               ></el-date-picker>
             </div>
-            <el-button 
-               type="primary"
-               style=" margin-left: 20px"
-            
+            <el-button
+              type="primary"
+              style="margin-left: 20px"
               @click="search"
               size="mini"
-              >{{ $t("common.find") }}</el-button>
+              >{{ $t("common.find") }}</el-button
+            >
             <!-- <div class="groups center">
               <span style="margin-right: 20px">{{
                 $t("personnel.visitor.export")
@@ -168,20 +166,19 @@
               />
             </template>
           </el-table-column>
-          <el-table-column
-            prop="name"
-           
-            :label="$t('personnel.staff.name')"
-          >
+          <el-table-column prop="name" :label="$t('personnel.staff.name')">
             <template slot-scope="scope">
               <span>{{ scope.row.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="temperature" :label="$t('mng.personnel.temprature')">
+          <el-table-column
+            prop="temperature"
+            :label="$t('mng.personnel.temprature')"
+          >
             <template slot-scope="scope">
-              <span
-                :class="scope.row.alarmType == 2 ? 'fever':'normal'"
-              >{{ getTemprature(scope.row.temperature)}}</span>
+              <span :class="scope.row.alarmType == 2 ? 'fever' : 'normal'">{{
+                getTemprature(scope.row.temperature)
+              }}</span>
             </template>
           </el-table-column>
           <!-- <el-table-column :label="$t('mng.personnel.capture')" width="160">
@@ -195,7 +192,6 @@
             </template>
           </el-table-column> -->
           <el-table-column
-           
             prop="robotName"
             :label="$t('personnel.stranger.list.robotName')"
           >
@@ -207,10 +203,16 @@
             prop="time"
             show-overflow-tooltip
             :label="$t('personnel.stranger.list.time')"
-           
           >
             <template slot-scope="scope">
               <span>{{ formateTime(scope.row.time) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="apiStatus" label="api发送状态">
+            <template slot-scope="scope">
+              <span @click="open1(scope.row.apiStatus)">{{
+                formateApiStatus(scope.row.apiStatus)
+              }}</span>
             </template>
           </el-table-column>
           <!-- <el-table-column prop="remark" :label="$t('room.edit.remark')">
@@ -327,7 +329,7 @@ export default {
         },
       ],
       timer: null,
-      timer2:null,
+      timer2: null,
       throtle: 37.3,
       strangerIcon: require("@/assets/svg/stranger.svg"),
       searchName: "",
@@ -475,6 +477,21 @@ export default {
     Register,
   },
   methods: {
+    open1(msg) {
+      const h = this.$createElement;
+
+      this.$notify({
+        title: "msg",
+        message: h(
+          "div",
+          { style: "color: teal;word-break: break-all;" },
+          msg.toString().split("#").length > 2
+            ? msg.toString().split("#")[2]
+            : msg.toString().split("#")[0]
+        ),
+        duration: 0,
+      });
+    },
     add(row) {
       console.log("row");
       console.log(row);
@@ -594,6 +611,15 @@ export default {
         "YYYY-MM-DD HH:mm:ss"
       );
     },
+    formateApiStatus(apiStatus) {
+      let apiStatuscode = apiStatus.toString().split("#")[0];
+
+      return apiStatuscode == "200"
+        ? "成功"
+        : apiStatuscode == ""
+        ? "未发送"
+        : apiStatuscode;
+    },
     getType(type) {
       console.log(type, "?");
       if (type == 1) {
@@ -638,21 +664,18 @@ export default {
     handleViewRecord(row) {
       console.log(row, "查看详情");
     },
-   async handleEdit(row) {
-      
+    async handleEdit(row) {
       //通过id查询到此user的详情
 
       if (row.userType !== 0) {
         //3
 
-      await  this.queryUser(row.useId, row);
+        await this.queryUser(row.useId, row);
         // this.queryUser("2faa921b74e64bc9914e5ed1e6912211", row);
       } else {
         this.formInline = Object.assign({}, this.formInline, row);
-        
       }
       this.centerDialogVisible = true;
-      
     },
     async queryUser(visitorId, row) {
       try {
@@ -966,7 +989,6 @@ export default {
           console.log(res);
           this.recordList = res.data.dataList;
           this.recordTotal = res.data.count;
-         
         } else {
           this.recordList = [];
           this.$Message.error(this.$t("common.searchError"));
@@ -976,9 +998,13 @@ export default {
         this.$Message.error(this.$t("common.searchError"));
       } finally {
         !hide && this.$refs.table && this.$refs.table.scrollTo(0, 0);
-       this.timer2 = setTimeout(() => {
-             this.getRecentAccess(true);
-          }, 2000);
+        if (this.timer2) {
+          clearTimeout(this.timer2);
+          this.timer2 = null;
+        }
+        this.timer2 = setTimeout(() => {
+          this.getRecentAccess(true);
+        }, 2000);
       }
     },
     async exportStrangerRecord() {
@@ -1025,14 +1051,13 @@ export default {
     });
   },
   beforeDestroy() {
-    
     this.$ebus.$off("/main/staff/list");
     if (this.timer) {
       clearInterval(this.timer);
     }
     if (this.timer2) {
-     clearTimeout(this.timer2)
-      
+      clearTimeout(this.timer2);
+      this.timer2 = null;
     }
   },
 };

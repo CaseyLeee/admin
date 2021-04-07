@@ -69,7 +69,7 @@
         class="robot-list"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="120"></el-table-column>
+        <el-table-column type="selection" width="50"></el-table-column>
 
         <el-table-column
           prop="identifier"
@@ -104,7 +104,7 @@
         <el-table-column
           fixed="right"
           :label="$t('common.operate')"
-          width="160"
+          width="200"
         >
           <template slot-scope="scope">
             <div class="operates">
@@ -115,12 +115,18 @@
                 style="color: #ff5b5b; margin: 0px"
                 >同步</el-button
               > -->
-
+             <el-button
+                @click="record(scope.row)"
+                type="text"
+                size="small"
+                style="color: #ff5b5b; margin-right: 10px"
+                >门禁记录</el-button
+              >
               <el-button
                 @click="handleShowEdit(scope.row)"
                 type="text"
                 size="small"
-                style="margin: 0px"
+                style=" margin-right: 10px"
                 >{{ $t("common.edit") }}</el-button
               >
               <!-- <el-button
@@ -502,6 +508,10 @@ export default {
         },
       });
       }
+    },
+    record(row){
+       let { identifier } = row;
+         window.location.href ="http://47.106.237.51:8080/inOut?sn="+identifier
     },
     handleSynchro(row) {
       let { identifier, name } = row;

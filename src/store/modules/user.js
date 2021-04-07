@@ -8,7 +8,7 @@ const getDefaultState = () => {
     token: getToken(),
     name: '',
     avatar: '',
-    roles: []
+    roles1: []
   }
 }
 
@@ -28,7 +28,7 @@ const mutations = {
     state.avatar = avatar
   },
   SET_ROLES: (state, roles) => {
-    state.roles = roles
+    state.roles1 = roles
   }
 }
 

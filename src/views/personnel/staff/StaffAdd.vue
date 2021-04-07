@@ -190,9 +190,12 @@ export default {
     const { picurl } = { ...this.$route.query };
     if (picurl != null) {
       //loading
-      //  this.imageUrl= `${process.env.VUE_APP_BASE_API}${picurl}`
-      //  this.form.headPath= this.toBase64(this.imageUrl) //网络图片转base64 跨域问题？
-      //
+    
+       this.imageUrl= `${process.env.VUE_APP_BASE_API}${picurl}`
+        //  console.log( 1111,this.imageUrl)
+       this.toBase64(this.imageUrl) 
+        
+      
     }
     this.role = 2;
     this.queryGroupInfoByType(this.role);
@@ -381,6 +384,7 @@ export default {
       };
     },
     toBase64(url) {
+      let that=this
       // 一定要设置为let，不然图片不显示
       let canvas = document.createElement("canvas");
       let ctx = canvas.getContext("2d");
@@ -394,8 +398,11 @@ export default {
       img.src = url + "?timeStamp=" + new Date();
 
       img.onload = function () {
+        
         ctx.drawImage(this, 0, 0, 100, 100);
         let base64 = canvas.toDataURL("image/jpg", 1);
+      
+        that.form.headPath=base64.split(',')[1] 
        
       };
     },

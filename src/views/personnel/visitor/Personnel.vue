@@ -119,6 +119,14 @@
               size="mini"
               >{{ $t("common.find") }}</el-button
             >
+            <el-button
+              type="primary"
+              style="margin-left: 20px"
+              @click="picfind"
+              size="mini"
+              >以图搜图</el-button
+            >
+
             <!-- <div class="groups center">
               <span style="margin-right: 20px">{{
                 $t("personnel.visitor.export")
@@ -477,6 +485,9 @@ export default {
     Register,
   },
   methods: {
+    picfind(){
+          window.location.href ="http://47.106.237.51:8080/"
+    },
     open1(msg) {
       const h = this.$createElement;
 
